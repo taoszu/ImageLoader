@@ -2,7 +2,7 @@ package com.taoszu.imageloader
 
 import android.view.View
 
-interface ImageLoaderStrategy {
+interface ImageLoaderFrame {
 
   fun load(view:View, uriString:String, loaderConfig: LoadConfig)
 

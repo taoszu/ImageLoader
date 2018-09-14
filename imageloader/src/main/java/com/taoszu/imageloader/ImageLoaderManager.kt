@@ -4,9 +4,9 @@ import android.view.View
 
 object ImageLoaderManager {
 
-  private var imageLoader: ImageLoaderStrategy? = null
+  private var imageLoader: ImageLoaderFrame? = null
 
-  fun injectLoader(imageLoader: ImageLoaderStrategy) {
+  fun injectLoader(imageLoader: ImageLoaderFrame) {
     this.imageLoader = imageLoader
   }
 
