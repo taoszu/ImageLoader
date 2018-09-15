@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
               fresco_view, frescoUriString,
               LoadConfig.Builder()
                       .placeHolder(R.drawable.ic_launcher_background)
-                      .failure(R.mipmap.error)
                       .isWrapContent(false)
                       .asCircle()
                       .build()
@@ -45,12 +44,10 @@ class MainActivity : AppCompatActivity() {
               glide_view, frescoUriString,
               LoadConfig.Builder()
                       .placeHolder(R.drawable.ic_launcher_background)
-                      .failure(R.mipmap.error)
                       .isWrapContent(false)
                       .asCircle()
                       .build())
     }
-
 
 
   }
