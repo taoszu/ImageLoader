@@ -6,14 +6,16 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.support.annotation.WorkerThread
-import android.view.View
+import android.widget.ImageView
 import com.facebook.common.executors.UiThreadImmediateExecutorService
 import com.facebook.common.references.CloseableReference
 import com.facebook.datasource.DataSource
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.controller.BaseControllerListener
+import com.facebook.drawee.generic.GenericDraweeHierarchy
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
 import com.facebook.drawee.generic.RoundingParams
-import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.drawee.view.DraweeHolder
 import com.facebook.imagepipeline.cache.MemoryCacheParams
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.facebook.imagepipeline.core.ImagePipelineFactory
@@ -81,21 +83,19 @@ class FrescoLoader : ImageLoaderFrame {
     return bitmap
   }
 
-  override fun loadRes(view: View, resId: Int, loaderConfig: LoadConfig) {
-    val draweeView = transformDraweeView(view)
-    buildDraweeViewConfig(draweeView, loaderConfig)
-    draweeView.setBackgroundResource(resId)
+  override fun loadRes(imageView: ImageView, resId: Int, loaderConfig: LoadConfig) {
+    val uri = Uri.Builder().scheme("res").authority(imageView.context.packageName).appendPath(resId.toString()).build()
+    loadUri(imageView, uri.toString(), loaderConfig)
   }
 
-  override fun loadUri(view: View, uriString: String, loaderConfig: LoadConfig) {
-    val draweeView = transformDraweeView(view)
-    buildDraweeViewConfig(draweeView, loaderConfig)
-
+  override fun loadUri(imageView: ImageView, uriString: String, loaderConfig: LoadConfig) {
+    val controllerBuilder = Fresco.newDraweeControllerBuilder()
     if (loaderConfig.isWrapContent) {
-      loadForResize(draweeView, uriString, loaderConfig)
-    } else {
-      draweeView.setImageURI(uriString)
+      controllerBuilder.controllerListener = transformResizeListener(imageView, loaderConfig)
     }
+    val draweeHolder = transformDraweeHolder(imageView, loaderConfig)
+    draweeHolder.controller = controllerBuilder.setUri(uriString).build()
+    imageView.setImageDrawable(draweeHolder.topLevelDrawable)
   }
 
   override fun clearTotalCache(context: Context) {
@@ -109,17 +109,17 @@ class FrescoLoader : ImageLoaderFrame {
   }
 
 
-  private fun loadForResize(draweeView: SimpleDraweeView, uriString: String, loaderConfig: LoadConfig) {
-    val controllerListener = object : BaseControllerListener<ImageInfo>() {
+  private fun transformResizeListener(imageView: ImageView, loaderConfig: LoadConfig):BaseControllerListener<ImageInfo> {
+    return object : BaseControllerListener<ImageInfo>() {
       override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
         super.onFinalImageSet(id, imageInfo, animatable)
         imageInfo?.let {
-          val maxHeight = ImageTools.getMaxHeight(draweeView)
-          val maxWidth = ImageTools.getMaxWidth(draweeView)
+          val maxHeight = ImageTools.getMaxHeight(imageView)
+          val maxWidth = ImageTools.getMaxWidth(imageView)
           val width = Math.min(maxWidth, imageInfo.width)
           val height = Math.min(maxHeight, imageInfo.height)
 
-          ImageTools.resizeView(draweeView, width, height)
+          ImageTools.resizeView(imageView, width, height)
         }
       }
 
@@ -129,39 +129,43 @@ class FrescoLoader : ImageLoaderFrame {
         loaderConfig.takeIf {
           it.failureRes != 0 && it.isWrapContent
         }?.let {
-          val failureBitmap = BitmapFactory.decodeResource(draweeView.resources, it.failureRes)
-          ImageTools.resizeView(draweeView, failureBitmap.width, failureBitmap.height)
+          val failureBitmap = BitmapFactory.decodeResource(imageView.resources, it.failureRes)
+          ImageTools.resizeView(imageView, failureBitmap.width, failureBitmap.height)
           failureBitmap.recycle()
         }
       }
 
     }
-
-    val controller = Fresco.newDraweeControllerBuilder()
-            .setControllerListener(controllerListener)
-            .setUri(uriString)
-            .build()
-    draweeView.controller = controller
   }
 
 
-  private fun buildDraweeViewConfig(draweeView: SimpleDraweeView, loaderConfig: LoadConfig) {
-    val hierarchy = draweeView.hierarchy
+  private fun transformDraweeHolder(imageView: ImageView, loaderConfig: LoadConfig): DraweeHolder<GenericDraweeHierarchy> {
+    val imageTag = imageView.getTag(R.id.drawee_holder)
+    return if (imageTag != null) {
+      imageTag as DraweeHolder<GenericDraweeHierarchy>
+    } else {
+      val hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
+      val hierarchy = hierarchyBuilder.build()
+      buildDraweeViewConfig(hierarchy, loaderConfig)
+      val draweeHolder = DraweeHolder.create(hierarchy, imageView.context)
+
+      imageView.setTag(R.id.drawee_holder, draweeHolder)
+      draweeHolder
+    }
+  }
+
+  private fun buildDraweeViewConfig(hierarchy: GenericDraweeHierarchy, loaderConfig: LoadConfig) {
     if (loaderConfig.placeHolderRes != 0) {
       hierarchy.setPlaceholderImage(loaderConfig.placeHolderRes)
     }
     if (loaderConfig.failureRes != 0) {
       hierarchy.setFailureImage(loaderConfig.failureRes)
     }
-
     if (loaderConfig.asCircle) {
       val roundParams = RoundingParams.asCircle()
       hierarchy.roundingParams = roundParams
     }
   }
 
-  private fun transformDraweeView(view: View): SimpleDraweeView {
-    return view as SimpleDraweeView
-  }
 
 }

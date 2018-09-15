@@ -2,7 +2,7 @@ package com.taoszu.imageloader
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.View
+import android.widget.ImageView
 
 interface ImageLoaderFrame {
 
@@ -10,9 +10,9 @@ interface ImageLoaderFrame {
 
   fun init(context: Context)
 
-  fun loadUri(view:View, uriString:String, loaderConfig: LoadConfig)
+  fun loadUri(imageView:ImageView, uriString:String, loaderConfig: LoadConfig)
 
-  fun loadRes(view:View, resId:Int, loaderConfig: LoadConfig)
+  fun loadRes(imageView:ImageView, resId:Int, loaderConfig: LoadConfig)
 
   fun getBitmap(context: Context, uriString: String):Bitmap?
 

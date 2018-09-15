@@ -25,12 +25,11 @@ class MainActivity : AppCompatActivity() {
     load_fresco.setOnClickListener {
       ImageLoaderManager.injectLoader(FrescoLoader()).init(this)
 
-
       ImageLoaderManager.loadUri(
               fresco_view, frescoUriString,
               LoadConfig.Builder()
                       .placeHolder(R.drawable.ic_launcher_background)
-                      .isWrapContent(false)
+                      .isWrapContent(true)
                       .asCircle()
                       .build()
       )

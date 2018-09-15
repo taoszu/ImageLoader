@@ -36,7 +36,7 @@ class GlideLoader :ImageLoaderFrame {
             .get()
   }
 
-  override fun loadRes(view: View, resId: Int, loaderConfig: LoadConfig) {
+  override fun loadRes(view: ImageView, resId: Int, loaderConfig: LoadConfig) {
     val glideView = transformGlideView(view)
     val requestOptions = buildOptions(loaderConfig)
 
@@ -46,7 +46,7 @@ class GlideLoader :ImageLoaderFrame {
             .into(glideView)
   }
 
-  override fun loadUri(view: View, uriString: String, loaderConfig: LoadConfig) {
+  override fun loadUri(view: ImageView, uriString: String, loaderConfig: LoadConfig) {
     val glideView = view as ImageView
     if (loaderConfig.isWrapContent) {
       wrapContentRequest(glideView, uriString, loaderConfig)

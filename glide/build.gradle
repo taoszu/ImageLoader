@@ -39,8 +39,11 @@ dependencies {
 }
 
 dependencies {
-    //implementation project(':imageloader')
-    implementation 'com.taoszu.imageloader:loaderframe:1.0.0'
+    if(Boolean.valueOf(userLocalDependency)) {
+        implementation project(":imageloader")
+    } else  {
+        implementation 'com.taoszu.imageloader:loaderframe:1.0.0'
+    }
 
     implementation 'com.github.bumptech.glide:glide:4.8.0'
 }

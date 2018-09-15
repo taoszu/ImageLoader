@@ -41,9 +41,13 @@ dependencies {
 dependencies {
     implementation "com.facebook.fresco:fresco:1.9.0"
 
-    //implementation project(":imageloader")
-    implementation 'com.taoszu.imageloader:loaderframe:1.0.0'
+    if(Boolean.valueOf(userLocalDependency)) {
+        implementation project(":imageloader")
+    } else  {
+        implementation 'com.taoszu.imageloader:loaderframe:1.0.0'
+    }
 }
+
 repositories {
     mavenCentral()
 }

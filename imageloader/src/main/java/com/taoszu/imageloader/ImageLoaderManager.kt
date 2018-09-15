@@ -3,6 +3,7 @@ package com.taoszu.imageloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
+import android.widget.ImageView
 
 object ImageLoaderManager : ImageLoaderFrame {
 
@@ -21,11 +22,11 @@ object ImageLoaderManager : ImageLoaderFrame {
     imageLoader?.init(context, frameConfig)
   }
 
-  override fun loadUri(view: View, uriString: String, loaderConfig: LoadConfig) {
+  override fun loadUri(view: ImageView, uriString: String, loaderConfig: LoadConfig) {
     imageLoader?.loadUri(view, uriString, loaderConfig)
   }
 
-  override fun loadRes(view: View, resId: Int, loaderConfig: LoadConfig) {
+  override fun loadRes(view: ImageView, resId: Int, loaderConfig: LoadConfig) {
     imageLoader?.loadRes(view, resId, loaderConfig)
   }
 
