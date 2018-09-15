@@ -11,11 +11,21 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
+import com.taoszu.imageloader.FrameConfig
 import com.taoszu.imageloader.ImageLoaderFrame
 import com.taoszu.imageloader.ImageTools
 import com.taoszu.imageloader.LoadConfig
 
-class GlideLoader : ImageLoaderFrame {
+class GlideLoader :ImageLoaderFrame {
+
+
+  override fun init(context: Context) {
+    // 需要自己定义GlideModule
+  }
+
+  override fun init(context: Context, frameConfig: FrameConfig) {
+    // 需要自己定义GlideModule
+  }
 
   @WorkerThread
   override fun getBitmap(context: Context, uriString: String):Bitmap? {
@@ -26,10 +36,13 @@ class GlideLoader : ImageLoaderFrame {
             .get()
   }
 
-  override fun loadRes(view: View, resId: Int) {
+  override fun loadRes(view: View, resId: Int, loaderConfig: LoadConfig) {
     val glideView = transformGlideView(view)
+    val requestOptions = buildOptions(loaderConfig)
+
     Glide.with(view.context)
             .load(resId)
+            .apply(requestOptions)
             .into(glideView)
   }
 
@@ -44,6 +57,16 @@ class GlideLoader : ImageLoaderFrame {
               .apply(requestOptions)
               .into(glideView)
     }
+  }
+
+  override fun clearTotalCache(context: Context) {
+  }
+
+  override fun clearMemoryCache(context: Context) {
+
+  }
+
+  override fun clearDiskCache(context: Context) {
   }
 
   private fun wrapContentRequest(glideView: ImageView, uriString: String, loaderConfig: LoadConfig) {
@@ -85,6 +108,11 @@ class GlideLoader : ImageLoaderFrame {
     if (loadConfig.placeHolderRes != 0) {
       requestOptions.placeholder(loadConfig.placeHolderRes)
     }
+
+    if (loadConfig.asCircle) {
+      requestOptions.transform(CircleTransformation())
+    }
+
     return requestOptions
   }
 

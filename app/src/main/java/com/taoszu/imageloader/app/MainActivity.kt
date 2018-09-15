@@ -9,6 +9,7 @@ import com.taoszu.imageloader.fresco.FrescoLoader
 import com.taoszu.imageloader.glide.GlideLoader
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,31 +19,38 @@ class MainActivity : AppCompatActivity() {
 
 
     val glideUriString = "http://img5.imgtn.bdimg.com/it/u=3535477663,205047880&fm=26&gp=0.jpg"
-    val frescoUriString = "http://img1.imgtn.bdimg.com/it/u=71655007,1152159672&fm=26&gp=0.jpg"
+    val frescoUriString = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537586212&di=b3c47e0d9ad3ffd7a0d39451e6b695cc&imgtype=jpg&er=1&src=http%3A%2F%2Fimg5q.duitang.com%2Fuploads%2Fitem%2F201312%2F05%2F20131205172346_TjxGy.thumb.700_0.png"
 
 
     load_fresco.setOnClickListener {
-      ImageLoaderManager.injectLoader(FrescoLoader())
+      ImageLoaderManager.injectLoader(FrescoLoader()).init(this)
+
+
       ImageLoaderManager.loadUri(
               fresco_view, frescoUriString,
               LoadConfig.Builder()
                       .placeHolder(R.drawable.ic_launcher_background)
                       .failure(R.mipmap.error)
                       .isWrapContent(false)
+                      .asCircle()
                       .build()
       )
     }
 
     load_glide.setOnClickListener {
-      ImageLoaderManager.injectLoader(GlideLoader())
+      ImageLoaderManager.injectLoader(GlideLoader()).init(this)
+
+
       ImageLoaderManager.loadUri(
-              glide_view, glideUriString,
+              glide_view, frescoUriString,
               LoadConfig.Builder()
                       .placeHolder(R.drawable.ic_launcher_background)
                       .failure(R.mipmap.error)
                       .isWrapContent(false)
+                      .asCircle()
                       .build())
     }
+
 
 
   }

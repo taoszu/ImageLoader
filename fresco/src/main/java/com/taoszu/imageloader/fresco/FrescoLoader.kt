@@ -12,12 +12,16 @@ import com.facebook.common.references.CloseableReference
 import com.facebook.datasource.DataSource
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.controller.BaseControllerListener
+import com.facebook.drawee.generic.RoundingParams
 import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.cache.MemoryCacheParams
+import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequestBuilder
+import com.taoszu.imageloader.FrameConfig
 import com.taoszu.imageloader.ImageLoaderFrame
 import com.taoszu.imageloader.ImageTools
 import com.taoszu.imageloader.LoadConfig
@@ -25,6 +29,29 @@ import java.util.concurrent.CountDownLatch
 
 
 class FrescoLoader : ImageLoaderFrame {
+
+  override fun init(context: Context, frameConfig: FrameConfig) {
+    val config = ImagePipelineConfig.newBuilder(context)
+            .setBitmapMemoryCacheParamsSupplier {
+              val MAX_CACHE_ENTRIES = 256
+              val MAX_EVICTION_QUEUE_SIZE = Integer.MAX_VALUE
+              val MAX_EVICTION_QUEUE_ENTRIES = Integer.MAX_VALUE
+              val MAX_CACHE_ENTRY_SIZE = Integer.MAX_VALUE
+
+              MemoryCacheParams(
+                      frameConfig.memoryCacheSize.toInt(),
+                      MAX_CACHE_ENTRIES, MAX_EVICTION_QUEUE_SIZE,
+                      MAX_EVICTION_QUEUE_ENTRIES, MAX_CACHE_ENTRY_SIZE
+              )
+            }
+            .build()
+
+    Fresco.initialize(context.applicationContext, config)
+  }
+
+  override fun init(context: Context) {
+    Fresco.initialize(context.applicationContext)
+  }
 
   @WorkerThread
   override fun getBitmap(context: Context, uriString: String): Bitmap? {
@@ -54,8 +81,9 @@ class FrescoLoader : ImageLoaderFrame {
     return bitmap
   }
 
-  override fun loadRes(view: View, resId: Int) {
+  override fun loadRes(view: View, resId: Int, loaderConfig: LoadConfig) {
     val draweeView = transformDraweeView(view)
+    buildDraweeViewConfig(draweeView, loaderConfig)
     draweeView.setBackgroundResource(resId)
   }
 
@@ -68,6 +96,16 @@ class FrescoLoader : ImageLoaderFrame {
     } else {
       draweeView.setImageURI(uriString)
     }
+  }
+
+  override fun clearTotalCache(context: Context) {
+  }
+
+  override fun clearMemoryCache(context: Context) {
+
+  }
+
+  override fun clearDiskCache(context: Context) {
   }
 
 
@@ -114,6 +152,11 @@ class FrescoLoader : ImageLoaderFrame {
     }
     if (loaderConfig.failureRes != 0) {
       hierarchy.setFailureImage(loaderConfig.failureRes)
+    }
+
+    if (loaderConfig.asCircle) {
+      val roundParams = RoundingParams.asCircle()
+      hierarchy.roundingParams = roundParams
     }
   }
 
