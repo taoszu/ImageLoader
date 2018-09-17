@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.WorkerThread
-import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -14,10 +13,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.taoszu.imageloader.FrameConfig
 import com.taoszu.imageloader.ImageLoaderFrame
 import com.taoszu.imageloader.ImageTools
-import com.taoszu.imageloader.LoadConfig
+import com.taoszu.imageloader.LoadOptions
 
-class GlideLoader :ImageLoaderFrame {
-
+class GlideLoader :ImageLoaderFrame() {
 
   override fun init(context: Context) {
     // 需要自己定义GlideModule
@@ -36,31 +34,27 @@ class GlideLoader :ImageLoaderFrame {
             .get()
   }
 
-  override fun loadRes(view: ImageView, resId: Int, loaderConfig: LoadConfig) {
-    val glideView = transformGlideView(view)
-    val requestOptions = buildOptions(loaderConfig)
+  override fun loadRes(glideView: ImageView, resId: Int, loaderOptions: LoadOptions) {
+    val requestOptions = buildOptions(loaderOptions)
 
-    Glide.with(view.context)
+    Glide.with(glideView.context)
             .load(resId)
             .apply(requestOptions)
             .into(glideView)
   }
 
-  override fun loadUri(view: ImageView, uriString: String, loaderConfig: LoadConfig) {
-    val glideView = view as ImageView
-    if (loaderConfig.isWrapContent) {
-      wrapContentRequest(glideView, uriString, loaderConfig)
+  override fun loadUri(glideView: ImageView, uriString: String, loaderOptions: LoadOptions) {
+    if (loaderOptions.isWrapContent) {
+      wrapContentRequest(glideView, uriString, loaderOptions)
     } else {
-      val requestOptions = buildOptions(loaderConfig)
-      Glide.with(view.context)
+      val requestOptions = buildOptions(loaderOptions)
+      Glide.with(glideView.context)
               .load(uriString)
               .apply(requestOptions)
               .into(glideView)
     }
   }
 
-  override fun clearTotalCache(context: Context) {
-  }
 
   override fun clearMemoryCache(context: Context) {
 
@@ -69,8 +63,8 @@ class GlideLoader :ImageLoaderFrame {
   override fun clearDiskCache(context: Context) {
   }
 
-  private fun wrapContentRequest(glideView: ImageView, uriString: String, loaderConfig: LoadConfig) {
-    val requestOptions = buildOptions(loaderConfig)
+  private fun wrapContentRequest(glideView: ImageView, uriString: String, loaderOptions: LoadOptions) {
+    val requestOptions = buildOptions(loaderOptions)
 
     val customViewTarget = object: CustomViewTarget<ImageView, Drawable>(glideView) {
       override fun onResourceCleared(placeholder: Drawable?) {}
@@ -85,12 +79,12 @@ class GlideLoader :ImageLoaderFrame {
       }
 
       override fun onLoadFailed(errorDrawable: Drawable?) {
-        view.setBackgroundResource(loaderConfig.failureRes)
+        view.setBackgroundResource(loaderOptions.failureRes)
       }
 
       override fun onResourceLoading(placeholder: Drawable?) {
         super.onResourceLoading(placeholder)
-        view.setBackgroundResource(loaderConfig.placeHolderRes)
+        view.setBackgroundResource(loaderOptions.placeHolderRes)
       }
     }
 
@@ -100,24 +94,20 @@ class GlideLoader :ImageLoaderFrame {
             .into(customViewTarget)
   }
 
-  private fun buildOptions(loadConfig: LoadConfig):RequestOptions {
+  private fun buildOptions(loadOptions: LoadOptions):RequestOptions {
     val requestOptions = RequestOptions()
-    if (loadConfig.failureRes != 0) {
-      requestOptions.error(loadConfig.failureRes)
+    if (loadOptions.failureRes != 0) {
+      requestOptions.error(loadOptions.failureRes)
     }
-    if (loadConfig.placeHolderRes != 0) {
-      requestOptions.placeholder(loadConfig.placeHolderRes)
+    if (loadOptions.placeHolderRes != 0) {
+      requestOptions.placeholder(loadOptions.placeHolderRes)
     }
 
-    if (loadConfig.asCircle) {
+    if (loadOptions.asCircle) {
       requestOptions.transform(CircleTransformation())
     }
 
     return requestOptions
-  }
-
-  private fun transformGlideView(view:View): ImageView {
-    return view as ImageView
   }
 
 }

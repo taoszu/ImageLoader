@@ -26,11 +26,11 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.taoszu.imageloader.FrameConfig
 import com.taoszu.imageloader.ImageLoaderFrame
 import com.taoszu.imageloader.ImageTools
-import com.taoszu.imageloader.LoadConfig
+import com.taoszu.imageloader.LoadOptions
 import java.util.concurrent.CountDownLatch
 
 
-class FrescoLoader : ImageLoaderFrame {
+class FrescoLoader : ImageLoaderFrame() {
 
   override fun init(context: Context, frameConfig: FrameConfig) {
     val config = ImagePipelineConfig.newBuilder(context)
@@ -83,22 +83,19 @@ class FrescoLoader : ImageLoaderFrame {
     return bitmap
   }
 
-  override fun loadRes(imageView: ImageView, resId: Int, loaderConfig: LoadConfig) {
+  override fun loadRes(imageView: ImageView, resId: Int, loaderOptions: LoadOptions) {
     val uri = Uri.Builder().scheme("res").authority(imageView.context.packageName).appendPath(resId.toString()).build()
-    loadUri(imageView, uri.toString(), loaderConfig)
+    loadUri(imageView, uri.toString(), loaderOptions)
   }
 
-  override fun loadUri(imageView: ImageView, uriString: String, loaderConfig: LoadConfig) {
+  override fun loadUri(imageView: ImageView, uriString: String, loaderOptions: LoadOptions) {
     val controllerBuilder = Fresco.newDraweeControllerBuilder()
-    if (loaderConfig.isWrapContent) {
-      controllerBuilder.controllerListener = transformResizeListener(imageView, loaderConfig)
+    if (loaderOptions.isWrapContent) {
+      controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions)
     }
-    val draweeHolder = transformDraweeHolder(imageView, loaderConfig)
+    val draweeHolder = transformDraweeHolder(imageView, loaderOptions)
     draweeHolder.controller = controllerBuilder.setUri(uriString).build()
     imageView.setImageDrawable(draweeHolder.topLevelDrawable)
-  }
-
-  override fun clearTotalCache(context: Context) {
   }
 
   override fun clearMemoryCache(context: Context) {
@@ -109,7 +106,7 @@ class FrescoLoader : ImageLoaderFrame {
   }
 
 
-  private fun transformResizeListener(imageView: ImageView, loaderConfig: LoadConfig):BaseControllerListener<ImageInfo> {
+  private fun transformResizeListener(imageView: ImageView, loaderOptions: LoadOptions):BaseControllerListener<ImageInfo> {
     return object : BaseControllerListener<ImageInfo>() {
       override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
         super.onFinalImageSet(id, imageInfo, animatable)
@@ -126,7 +123,7 @@ class FrescoLoader : ImageLoaderFrame {
       override fun onFailure(id: String?, throwable: Throwable?) {
         super.onFailure(id, throwable)
 
-        loaderConfig.takeIf {
+        loaderOptions.takeIf {
           it.failureRes != 0 && it.isWrapContent
         }?.let {
           val failureBitmap = BitmapFactory.decodeResource(imageView.resources, it.failureRes)
@@ -139,14 +136,14 @@ class FrescoLoader : ImageLoaderFrame {
   }
 
 
-  private fun transformDraweeHolder(imageView: ImageView, loaderConfig: LoadConfig): DraweeHolder<GenericDraweeHierarchy> {
+  private fun transformDraweeHolder(imageView: ImageView, loaderOptions: LoadOptions): DraweeHolder<GenericDraweeHierarchy> {
     val imageTag = imageView.getTag(R.id.drawee_holder)
     return if (imageTag != null) {
       imageTag as DraweeHolder<GenericDraweeHierarchy>
     } else {
       val hierarchyBuilder = GenericDraweeHierarchyBuilder.newInstance(imageView.context.resources)
       val hierarchy = hierarchyBuilder.build()
-      buildDraweeViewConfig(hierarchy, loaderConfig)
+      buildDraweeViewConfig(hierarchy, loaderOptions)
       val draweeHolder = DraweeHolder.create(hierarchy, imageView.context)
 
       imageView.setTag(R.id.drawee_holder, draweeHolder)
@@ -154,14 +151,14 @@ class FrescoLoader : ImageLoaderFrame {
     }
   }
 
-  private fun buildDraweeViewConfig(hierarchy: GenericDraweeHierarchy, loaderConfig: LoadConfig) {
-    if (loaderConfig.placeHolderRes != 0) {
-      hierarchy.setPlaceholderImage(loaderConfig.placeHolderRes)
+  private fun buildDraweeViewConfig(hierarchy: GenericDraweeHierarchy, loaderOptions: LoadOptions) {
+    if (loaderOptions.placeHolderRes != 0) {
+      hierarchy.setPlaceholderImage(loaderOptions.placeHolderRes)
     }
-    if (loaderConfig.failureRes != 0) {
-      hierarchy.setFailureImage(loaderConfig.failureRes)
+    if (loaderOptions.failureRes != 0) {
+      hierarchy.setFailureImage(loaderOptions.failureRes)
     }
-    if (loaderConfig.asCircle) {
+    if (loaderOptions.asCircle) {
       val roundParams = RoundingParams.asCircle()
       hierarchy.roundingParams = roundParams
     }

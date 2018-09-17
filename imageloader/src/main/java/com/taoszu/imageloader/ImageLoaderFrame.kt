@@ -4,21 +4,35 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
 
-interface ImageLoaderFrame {
+abstract class ImageLoaderFrame {
 
-  fun init(context: Context, frameConfig: FrameConfig)
 
-  fun init(context: Context)
+  private val defaultOptions = LoadOptions.Builder().build()
 
-  fun loadUri(imageView:ImageView, uriString:String, loaderConfig: LoadConfig)
+  fun clearTotalCache(context: Context) {
+    clearDiskCache(context)
+    clearMemoryCache(context)
+  }
 
-  fun loadRes(imageView:ImageView, resId:Int, loaderConfig: LoadConfig)
+  fun loadUri(imageView:ImageView, uriString:String) {
+    loadUri(imageView, uriString, defaultOptions)
+  }
 
-  fun getBitmap(context: Context, uriString: String):Bitmap?
+  fun loadRes(imageView:ImageView, resId:Int) {
+    loadRes(imageView, resId, defaultOptions)
+  }
 
-  fun clearTotalCache(context: Context)
+  abstract fun init(context: Context, frameConfig: FrameConfig)
 
-  fun clearMemoryCache(context: Context)
+  abstract fun init(context: Context)
 
-  fun clearDiskCache(context: Context)
+  abstract fun loadUri(imageView:ImageView, uriString:String, loaderOptions: LoadOptions)
+
+  abstract fun loadRes(imageView:ImageView, resId:Int, loaderOptions: LoadOptions)
+
+  abstract fun getBitmap(context: Context, uriString: String):Bitmap?
+
+  abstract fun clearMemoryCache(context: Context)
+
+  abstract fun clearDiskCache(context: Context)
 }

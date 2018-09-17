@@ -41,7 +41,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'loaderframe'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'imageloader frame'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true

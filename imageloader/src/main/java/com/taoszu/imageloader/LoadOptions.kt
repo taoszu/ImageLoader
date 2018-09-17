@@ -1,8 +1,6 @@
 package com.taoszu.imageloader
 
-import kotlin.coroutines.experimental.buildIterator
-
-class LoadConfig private constructor(builder : Builder) {
+class LoadOptions private constructor(builder : Builder) {
 
   var placeHolderRes: Int = 0
   var failureRes: Int = 0
@@ -50,8 +48,8 @@ class LoadConfig private constructor(builder : Builder) {
       return this
     }
 
-    fun build(): LoadConfig {
-      return LoadConfig(this)
+    fun build(): LoadOptions {
+      return LoadOptions(this)
     }
   }
 
