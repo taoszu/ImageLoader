@@ -40,9 +40,9 @@ dependencies {
         implementation project(":glide")
 
     } else {
-        implementation "com.taoszu.imageloader:loaderframe:1.0.1"
-        implementation "com.taoszu.imageloader:glide:1.0.0"
-        implementation "com.taoszu.imageloader:fresco:1.0.1"
+        implementation "com.taoszu.imageloader:loaderframe:1.0.2"
+        implementation "com.taoszu.imageloader:glide:1.0.1"
+        implementation "com.taoszu.imageloader:fresco:1.0.2"
     }
 
     implementation "com.facebook.fresco:fresco:1.9.0"

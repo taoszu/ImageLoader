@@ -44,7 +44,7 @@ dependencies {
     if(Boolean.valueOf(userLocalDependency)) {
         implementation project(":imageloader")
     } else  {
-        implementation 'com.taoszu.imageloader:loaderframe:1.0.1'
+        implementation 'com.taoszu.imageloader:loaderframe:1.0.2'
     }
 }
 
@@ -56,7 +56,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'fresco'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'imageloader fresco'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true

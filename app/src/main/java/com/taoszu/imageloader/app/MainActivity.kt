@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.taoszu.imageloader.ImageLoaderManager
-import com.taoszu.imageloader.LoadOptions
 import com.taoszu.imageloader.fresco.FrescoLoader
 import com.taoszu.imageloader.glide.GlideLoader
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     load_glide.setOnClickListener {
       ImageLoaderManager.injectLoader(GlideLoader()).init(this)
+
       ImageLoaderManager.loadUri(glide_view, frescoUriString)
     }
 
