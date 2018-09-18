@@ -158,10 +158,18 @@ class FrescoLoader : ImageLoaderFrame() {
     if (loaderOptions.failureRes != 0) {
       hierarchy.setFailureImage(loaderOptions.failureRes)
     }
+
     if (loaderOptions.asCircle) {
       val roundParams = RoundingParams.asCircle()
       hierarchy.roundingParams = roundParams
     }
+
+    loaderOptions.roundParams?.let {
+      val roundingParams = RoundingParams()
+      roundingParams.setCornersRadius(it.radius)
+      hierarchy.roundingParams = roundingParams
+    }
+
   }
 
 

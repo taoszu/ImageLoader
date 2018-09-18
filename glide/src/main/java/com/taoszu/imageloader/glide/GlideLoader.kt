@@ -36,7 +36,6 @@ class GlideLoader :ImageLoaderFrame() {
 
   override fun loadRes(glideView: ImageView, resId: Int, loaderOptions: LoadOptions) {
     val requestOptions = buildOptions(loaderOptions)
-
     Glide.with(glideView.context)
             .load(resId)
             .apply(requestOptions)
@@ -47,11 +46,33 @@ class GlideLoader :ImageLoaderFrame() {
     if (loaderOptions.isWrapContent) {
       wrapContentRequest(glideView, uriString, loaderOptions)
     } else {
+
       val requestOptions = buildOptions(loaderOptions)
+
       Glide.with(glideView.context)
               .load(uriString)
               .apply(requestOptions)
-              .into(glideView)
+              .into(object:CustomViewTarget<ImageView, Drawable>(glideView) {
+                override fun onResourceCleared(placeholder: Drawable?) {}
+
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                  view.background = resource
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                  errorDrawable?.let {
+                    view.background = errorDrawable
+                  }
+                }
+
+                override fun onResourceLoading(placeholder: Drawable?) {
+                  super.onResourceLoading(placeholder)
+                  placeholder?.let {
+                    view.background = placeholder
+                  }
+                }
+
+              })
     }
   }
 
@@ -79,12 +100,16 @@ class GlideLoader :ImageLoaderFrame() {
       }
 
       override fun onLoadFailed(errorDrawable: Drawable?) {
-        view.setBackgroundResource(loaderOptions.failureRes)
+        errorDrawable?.let {
+          view.background = errorDrawable
+        }
       }
 
       override fun onResourceLoading(placeholder: Drawable?) {
         super.onResourceLoading(placeholder)
-        view.setBackgroundResource(loaderOptions.placeHolderRes)
+        placeholder?.let {
+          view.background = placeholder
+        }
       }
     }
 
@@ -105,6 +130,10 @@ class GlideLoader :ImageLoaderFrame() {
 
     if (loadOptions.asCircle) {
       requestOptions.transform(CircleTransformation())
+    }
+
+    loadOptions.roundParams?.let {
+      requestOptions.transform(RoundedCornersTransformation(it.radius, 0f))
     }
 
     return requestOptions
