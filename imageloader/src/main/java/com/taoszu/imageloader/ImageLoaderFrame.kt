@@ -14,7 +14,7 @@ abstract class ImageLoaderFrame {
     clearMemoryCache(context)
   }
 
-  fun loadUri(imageView:ImageView, uriString:String) {
+  fun loadUri(imageView:ImageView, uriString:String?) {
     loadUri(imageView, uriString, defaultOptions)
   }
 
@@ -26,11 +26,11 @@ abstract class ImageLoaderFrame {
 
   abstract fun init(context: Context)
 
-  abstract fun loadUri(imageView:ImageView, uriString:String, loaderOptions: LoadOptions)
+  abstract fun loadUri(imageView:ImageView, uriString:String?, loaderOptions: LoadOptions)
 
   abstract fun loadRes(imageView:ImageView, resId:Int, loaderOptions: LoadOptions)
 
-  abstract fun getBitmap(context: Context, uriString: String):Bitmap?
+  abstract fun getBitmap(context: Context, uriString: String?):Bitmap?
 
   abstract fun clearMemoryCache(context: Context)
 

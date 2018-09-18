@@ -21,7 +21,7 @@ object ImageLoaderManager : ImageLoaderFrame() {
     imageLoader?.init(context, frameConfig)
   }
 
-  override fun loadUri(view: ImageView, uriString: String, loaderOptions: LoadOptions) {
+  override fun loadUri(view: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     imageLoader?.loadUri(view, uriString, loaderOptions)
   }
 
@@ -29,7 +29,7 @@ object ImageLoaderManager : ImageLoaderFrame() {
     imageLoader?.loadRes(view, resId, loaderOptions)
   }
 
-  override fun getBitmap(context: Context, uriString: String): Bitmap? {
+  override fun getBitmap(context: Context, uriString: String?): Bitmap? {
     return imageLoader?.getBitmap(context, uriString)
   }
 

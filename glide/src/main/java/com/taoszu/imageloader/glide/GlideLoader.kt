@@ -26,7 +26,7 @@ class GlideLoader :ImageLoaderFrame() {
   }
 
   @WorkerThread
-  override fun getBitmap(context: Context, uriString: String):Bitmap? {
+  override fun getBitmap(context: Context, uriString: String?):Bitmap? {
     return Glide.with(context)
             .asBitmap()
             .load(uriString)
@@ -42,12 +42,13 @@ class GlideLoader :ImageLoaderFrame() {
             .into(glideView)
   }
 
-  override fun loadUri(glideView: ImageView, uriString: String, loaderOptions: LoadOptions) {
+  override fun loadUri(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     if (loaderOptions.isWrapContent) {
       wrapContentRequest(glideView, uriString, loaderOptions)
     } else {
 
       val requestOptions = buildOptions(loaderOptions)
+      requestOptions.fitCenter()
 
       Glide.with(glideView.context)
               .load(uriString)
@@ -56,19 +57,19 @@ class GlideLoader :ImageLoaderFrame() {
                 override fun onResourceCleared(placeholder: Drawable?) {}
 
                 override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                  view.background = resource
+                  view.setImageDrawable(resource)
                 }
 
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                   errorDrawable?.let {
-                    view.background = errorDrawable
+                    view.setImageDrawable(it)
                   }
                 }
 
                 override fun onResourceLoading(placeholder: Drawable?) {
                   super.onResourceLoading(placeholder)
                   placeholder?.let {
-                    view.background = placeholder
+                    view.setImageDrawable(it)
                   }
                 }
 
@@ -84,7 +85,7 @@ class GlideLoader :ImageLoaderFrame() {
   override fun clearDiskCache(context: Context) {
   }
 
-  private fun wrapContentRequest(glideView: ImageView, uriString: String, loaderOptions: LoadOptions) {
+  private fun wrapContentRequest(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     val requestOptions = buildOptions(loaderOptions)
 
     val customViewTarget = object: CustomViewTarget<ImageView, Drawable>(glideView) {
@@ -96,19 +97,19 @@ class GlideLoader :ImageLoaderFrame() {
         val height = bitmap.height
 
         ImageTools.resizeView(view, width, height)
-        view.background = resource
+        view.setImageDrawable(resource)
       }
 
       override fun onLoadFailed(errorDrawable: Drawable?) {
         errorDrawable?.let {
-          view.background = errorDrawable
+          view.setImageDrawable(it)
         }
       }
 
       override fun onResourceLoading(placeholder: Drawable?) {
         super.onResourceLoading(placeholder)
         placeholder?.let {
-          view.background = placeholder
+          view.setImageDrawable(it)
         }
       }
     }

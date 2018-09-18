@@ -2,6 +2,12 @@
 
 buildscript {
     ext.kotlin_version = '1.2.70'
+
+    ext.loader_frame_version = '1.0.4'
+    ext.loader_glide_version = '1.0.4'
+    ext.loader_fresco_version = '1.0.3'
+
+
     repositories {
         google()
         jcenter()

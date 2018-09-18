@@ -56,7 +56,7 @@ class FrescoLoader : ImageLoaderFrame() {
   }
 
   @WorkerThread
-  override fun getBitmap(context: Context, uriString: String): Bitmap? {
+  override fun getBitmap(context: Context, uriString: String?): Bitmap? {
     var bitmap: Bitmap? = null
     val countDownLatch = CountDownLatch(1)
 
@@ -88,7 +88,7 @@ class FrescoLoader : ImageLoaderFrame() {
     loadUri(imageView, uri.toString(), loaderOptions)
   }
 
-  override fun loadUri(imageView: ImageView, uriString: String, loaderOptions: LoadOptions) {
+  override fun loadUri(imageView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     val controllerBuilder = Fresco.newDraweeControllerBuilder()
     if (loaderOptions.isWrapContent) {
       controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions)
