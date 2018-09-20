@@ -1,4 +1,4 @@
-package com.taoszu.imageloader.app;
+package com.taoszu.imageloader.pinch;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -15,6 +15,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+
+/***
+ *
+ * fork from  https://github.com/boycy815/PinchImageView
+ *
+ */
 
 /**
  * 手势图片控件
