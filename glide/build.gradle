@@ -35,24 +35,25 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 dependencies {
-    if(Boolean.valueOf(userLocalDependency)) {
+    if (Boolean.valueOf(userLocalDependency)) {
         implementation project(":imageloader")
-    } else  {
+    } else {
         implementation "com.taoszu.imageloader:loaderframe:$loader_frame_version"
     }
 
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    api('com.github.bumptech.glide:glide:4.8.0')
 }
+
 
 publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'glide'
-    publishVersion = "1.0.5"
+    publishVersion = "1.0.7.1"
     desc = 'imageloader glide'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true

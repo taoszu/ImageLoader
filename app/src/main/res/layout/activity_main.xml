@@ -25,8 +25,8 @@
 
     <ImageView
       android:id="@+id/fresco_view"
-      android:layout_width="match_parent"
-      android:layout_height="200dp" />
+      android:layout_width="100dp"
+      android:layout_height="100dp" />
 
     <LinearLayout
       android:layout_width="match_parent"
@@ -34,11 +34,10 @@
       android:paddingLeft="10dp"
       android:paddingRight="10dp"/>
 
-
   </FrameLayout>
 
 
-  <com.taoszu.imageloader.pinch.PinchImageView
+  <ImageView
     android:id="@+id/glide_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

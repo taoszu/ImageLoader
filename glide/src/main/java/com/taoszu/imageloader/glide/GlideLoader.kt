@@ -10,12 +10,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.taoszu.imageloader.FrameConfig
-import com.taoszu.imageloader.ImageLoaderFrame
-import com.taoszu.imageloader.ImageTools
-import com.taoszu.imageloader.LoadOptions
+import com.taoszu.imageloader.*
 
-class GlideLoader :ImageLoaderFrame() {
+class GlideLoader : ImageLoaderFrame() {
 
   override fun init(context: Context) {
     // 需要自己定义GlideModule
@@ -26,7 +23,7 @@ class GlideLoader :ImageLoaderFrame() {
   }
 
   @WorkerThread
-  override fun getBitmap(context: Context, uriString: String?):Bitmap? {
+  override fun getBitmap(context: Context, uriString: String?): Bitmap? {
     return Glide.with(context)
             .asBitmap()
             .load(uriString)
@@ -43,17 +40,31 @@ class GlideLoader :ImageLoaderFrame() {
   }
 
   override fun loadUri(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
-    if (loaderOptions.isWrapContent) {
-      wrapContentRequest(glideView, uriString, loaderOptions)
-    } else {
+    loadUri(glideView, uriString, loaderOptions, null)
+  }
 
-      val requestOptions = buildOptions(loaderOptions)
-
-      Glide.with(glideView.context)
-              .load(uriString)
-              .apply(requestOptions)
-              .into(glideView)
+  override fun loadUri(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?) {
+    val requestOptions = buildOptions(loaderOptions)
+    loaderOptions.imageSize?.let {
+      requestOptions.override(it.width, it.height)
     }
+    Glide.with(glideView.context)
+            .load(uriString)
+            .apply(requestOptions)
+            .into(object : DrawableImageViewTarget(glideView) {
+              override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                super.onResourceReady(resource, transition)
+
+                val bitmap = (resource as BitmapDrawable).bitmap
+                imageInfoCallback?.onSuccess(ImageSize(bitmap.width, bitmap.height))
+              }
+
+              override fun onLoadFailed(errorDrawable: Drawable?) {
+                super.onLoadFailed(errorDrawable)
+
+                imageInfoCallback?.onFailed()
+              }
+            })
   }
 
 
@@ -64,29 +75,7 @@ class GlideLoader :ImageLoaderFrame() {
   override fun clearDiskCache(context: Context) {
   }
 
-  private fun wrapContentRequest(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
-    val requestOptions = buildOptions(loaderOptions)
-
-    val customViewTarget = object: DrawableImageViewTarget(glideView) {
-
-      override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-        super.onResourceReady(resource, transition)
-
-        val bitmap = (resource as BitmapDrawable).bitmap
-        val width = bitmap.width
-        val height = bitmap.height
-
-        ImageTools.resizeView(view, width, height)
-      }
-    }
-
-    Glide.with(glideView.context)
-            .load(uriString)
-            .apply(requestOptions)
-            .into(customViewTarget)
-  }
-
-  private fun buildOptions(loadOptions: LoadOptions):RequestOptions {
+  private fun buildOptions(loadOptions: LoadOptions): RequestOptions {
     val requestOptions = RequestOptions()
     if (loadOptions.failureRes != 0) {
       requestOptions.error(loadOptions.failureRes)

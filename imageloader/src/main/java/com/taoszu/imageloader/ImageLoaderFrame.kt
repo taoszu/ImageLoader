@@ -18,6 +18,10 @@ abstract class ImageLoaderFrame {
     loadUri(imageView, uriString, defaultOptions)
   }
 
+  fun loadUri(imageView:ImageView, uriString:String?, imageInfoCallback: ImageInfoCallback?) {
+    loadUri(imageView, uriString, defaultOptions, imageInfoCallback)
+  }
+
   fun loadRes(imageView:ImageView, resId:Int) {
     loadRes(imageView, resId, defaultOptions)
   }
@@ -27,6 +31,8 @@ abstract class ImageLoaderFrame {
   abstract fun init(context: Context)
 
   abstract fun loadUri(imageView:ImageView, uriString:String?, loaderOptions: LoadOptions)
+
+  abstract fun loadUri(imageView:ImageView, uriString:String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?)
 
   abstract fun loadRes(imageView:ImageView, resId:Int, loaderOptions: LoadOptions)
 

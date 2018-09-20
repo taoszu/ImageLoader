@@ -23,10 +23,7 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.taoszu.imageloader.FrameConfig
-import com.taoszu.imageloader.ImageLoaderFrame
-import com.taoszu.imageloader.ImageTools
-import com.taoszu.imageloader.LoadOptions
+import com.taoszu.imageloader.*
 import java.util.concurrent.CountDownLatch
 
 
@@ -89,10 +86,13 @@ class FrescoLoader : ImageLoaderFrame() {
   }
 
   override fun loadUri(imageView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
+    loadUri(imageView, uriString, loaderOptions, null)
+  }
+
+  override fun loadUri(imageView: ImageView, uriString: String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?) {
     val controllerBuilder = Fresco.newDraweeControllerBuilder()
-    if (loaderOptions.isWrapContent) {
-      controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions)
-    }
+    controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions,imageInfoCallback)
+
     val draweeHolder = transformDraweeHolder(imageView, loaderOptions)
     draweeHolder.controller = controllerBuilder.setUri(uriString).build()
     imageView.setImageDrawable(draweeHolder.topLevelDrawable)
@@ -106,34 +106,29 @@ class FrescoLoader : ImageLoaderFrame() {
   }
 
 
-  private fun transformResizeListener(imageView: ImageView, loaderOptions: LoadOptions):BaseControllerListener<ImageInfo> {
+  private fun transformResizeListener(imageView: ImageView, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?):BaseControllerListener<ImageInfo> {
     return object : BaseControllerListener<ImageInfo>() {
       override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
         super.onFinalImageSet(id, imageInfo, animatable)
-        imageInfo?.let {
-          val maxHeight = ImageTools.getMaxHeight(imageView)
-          val maxWidth = ImageTools.getMaxWidth(imageView)
-          val width = Math.min(maxWidth, imageInfo.width)
-          val height = Math.min(maxHeight, imageInfo.height)
 
-          ImageTools.resizeView(imageView, width, height)
+        loaderOptions.imageSize?.let {
+          ImageTools.resizeView(imageView, it.width, it.height)
+        }
+
+        if (imageInfo == null) {
+          imageInfoCallback?.onFailed()
+        } else {
+          imageInfoCallback?.onSuccess(ImageSize(imageInfo.width, imageInfo.height))
         }
       }
 
       override fun onFailure(id: String?, throwable: Throwable?) {
         super.onFailure(id, throwable)
-
-        loaderOptions.takeIf {
-          it.failureRes != 0 && it.isWrapContent
-        }?.let {
-          val failureBitmap = BitmapFactory.decodeResource(imageView.resources, it.failureRes)
-          ImageTools.resizeView(imageView, failureBitmap.width, failureBitmap.height)
-          failureBitmap.recycle()
-        }
+        imageInfoCallback?.onFailed()
       }
-
     }
   }
+
 
 
   private fun transformDraweeHolder(imageView: ImageView, loaderOptions: LoadOptions): DraweeHolder<GenericDraweeHierarchy> {

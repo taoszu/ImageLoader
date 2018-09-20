@@ -1,27 +1,31 @@
 package com.taoszu.imageloader
 
+import android.content.Context
+import java.lang.IllegalArgumentException
+
 class LoadOptions private constructor(builder : Builder) {
 
   var placeHolderRes: Int = 0
   var failureRes: Int = 0
-  var isWrapContent:Boolean = false
   var roundParams:RoundParams? = null
+  var imageSize:ImageSize? = null
+
   var asCircle = false
 
   init {
     placeHolderRes = builder.placeHolderRes
-    isWrapContent = builder.isWrapContent
     failureRes = builder.failureRes
     roundParams = builder.roundParams
     asCircle = builder.asCircle
+    imageSize = builder.imageSize
   }
 
   class Builder {
     internal var placeHolderRes: Int = 0
-    internal var isWrapContent:Boolean = false
     internal var failureRes: Int = 0
     internal var roundParams:RoundParams? = null
     internal var asCircle = false
+    internal var imageSize:ImageSize? = null
 
     fun placeHolder(placeHolderRes: Int):Builder {
       this.placeHolderRes = placeHolderRes
@@ -33,11 +37,6 @@ class LoadOptions private constructor(builder : Builder) {
       return this
     }
 
-    fun isWrapContent(isWrapContent:Boolean):Builder {
-      this.isWrapContent = isWrapContent
-      return this
-    }
-
     fun roundParams(roundParams:RoundParams):Builder {
       this.roundParams = roundParams
       return this
@@ -45,6 +44,18 @@ class LoadOptions private constructor(builder : Builder) {
 
     fun asCircle():Builder {
       asCircle = true
+      return this
+    }
+
+    fun sizeDp(context: Context, width:Float, height:Float):Builder {
+      return size(ImageTools.dp2px(context, width).toInt(), ImageTools.dp2px(context, height).toInt())
+    }
+
+    fun size(width:Int, height:Int):Builder {
+      if (width <= 0 || height <= 0) {
+        throw IllegalArgumentException("width and height must not small than 0")
+      }
+      imageSize = ImageSize(width, height)
       return this
     }
 

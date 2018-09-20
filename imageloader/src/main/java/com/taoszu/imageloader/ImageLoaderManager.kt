@@ -21,6 +21,10 @@ object ImageLoaderManager : ImageLoaderFrame() {
     imageLoader?.init(context, frameConfig)
   }
 
+  override fun loadUri(imageView: ImageView, uriString: String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?) {
+    imageLoader?.loadUri(imageView, uriString, loaderOptions, imageInfoCallback)
+  }
+
   override fun loadUri(view: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     imageLoader?.loadUri(view, uriString, loaderOptions)
   }

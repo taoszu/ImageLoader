@@ -39,7 +39,7 @@ dependencies {
 
 
 dependencies {
-    implementation "com.facebook.fresco:fresco:1.9.0"
+    api "com.facebook.fresco:fresco:1.9.0"
 
     if(Boolean.valueOf(userLocalDependency)) {
         implementation project(":imageloader")
@@ -56,7 +56,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'fresco'
-    publishVersion = "1.0.4"
+    publishVersion = "1.0.5"
     desc = 'imageloader fresco'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true
