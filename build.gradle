@@ -4,8 +4,9 @@ buildscript {
     ext.kotlin_version = '1.2.70'
 
     ext.loader_frame_version = '1.0.4'
-    ext.loader_glide_version = '1.0.4'
+    ext.loader_glide_version = '1.0.5'
     ext.loader_fresco_version = '1.0.3'
+    ext.loader_pinch_version = '1.0.0'
 
 
     repositories {

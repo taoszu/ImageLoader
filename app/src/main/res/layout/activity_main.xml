@@ -19,17 +19,29 @@
     android:text="加载Glide"
     />
 
-  <ImageView
-    android:id="@+id/fresco_view"
-    android:layout_width="200dp"
-    android:layout_height="200dp"
-    android:scaleType="fitXY"
-    />
-
-  <com.taoszu.imageloader.app.PinchImageView
-    android:id="@+id/glide_view"
+  <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+      android:id="@+id/fresco_view"
+      android:layout_width="match_parent"
+      android:layout_height="200dp" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="10dp"
+      android:paddingRight="10dp"/>
+
+
+  </FrameLayout>
+
+
+  <com.taoszu.imageloader.pinch.PinchImageView
+    android:id="@+id/glide_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

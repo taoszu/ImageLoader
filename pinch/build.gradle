@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 28
@@ -32,3 +33,14 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+publish {
+    userOrg = 'taoszu'
+    groupId = 'com.taoszu.imageloader'
+    artifactId = 'pinch'
+    publishVersion = "1.0.0"
+    desc = 'imageloader pinch'
+    website = 'https://github.com/taoszu/ImageLoader'
+    autoPublish = true
+}
+

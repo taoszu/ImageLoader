@@ -9,8 +9,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.ImageView;
-
+import android.support.v7.widget.AppCompatImageView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.Queue;
  *
  * @author clifford
  */
-public class PinchImageView extends ImageView  {
+public class PinchImageView extends AppCompatImageView  {
 
 
   ////////////////////////////////配置参数////////////////////////////////

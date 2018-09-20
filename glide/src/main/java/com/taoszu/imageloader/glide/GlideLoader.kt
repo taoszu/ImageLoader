@@ -8,7 +8,7 @@ import android.support.annotation.WorkerThread
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.taoszu.imageloader.FrameConfig
 import com.taoszu.imageloader.ImageLoaderFrame
@@ -48,32 +48,11 @@ class GlideLoader :ImageLoaderFrame() {
     } else {
 
       val requestOptions = buildOptions(loaderOptions)
-      requestOptions.fitCenter()
 
       Glide.with(glideView.context)
               .load(uriString)
               .apply(requestOptions)
-              .into(object:CustomViewTarget<ImageView, Drawable>(glideView) {
-                override fun onResourceCleared(placeholder: Drawable?) {}
-
-                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                  view.setImageDrawable(resource)
-                }
-
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                  errorDrawable?.let {
-                    view.setImageDrawable(it)
-                  }
-                }
-
-                override fun onResourceLoading(placeholder: Drawable?) {
-                  super.onResourceLoading(placeholder)
-                  placeholder?.let {
-                    view.setImageDrawable(it)
-                  }
-                }
-
-              })
+              .into(glideView)
     }
   }
 
@@ -88,29 +67,16 @@ class GlideLoader :ImageLoaderFrame() {
   private fun wrapContentRequest(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
     val requestOptions = buildOptions(loaderOptions)
 
-    val customViewTarget = object: CustomViewTarget<ImageView, Drawable>(glideView) {
-      override fun onResourceCleared(placeholder: Drawable?) {}
+    val customViewTarget = object: DrawableImageViewTarget(glideView) {
 
       override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+        super.onResourceReady(resource, transition)
+
         val bitmap = (resource as BitmapDrawable).bitmap
         val width = bitmap.width
         val height = bitmap.height
 
         ImageTools.resizeView(view, width, height)
-        view.setImageDrawable(resource)
-      }
-
-      override fun onLoadFailed(errorDrawable: Drawable?) {
-        errorDrawable?.let {
-          view.setImageDrawable(it)
-        }
-      }
-
-      override fun onResourceLoading(placeholder: Drawable?) {
-        super.onResourceLoading(placeholder)
-        placeholder?.let {
-          view.setImageDrawable(it)
-        }
       }
     }
 

@@ -43,11 +43,13 @@ dependencies {
         implementation project(":imageloader")
         implementation project(":fresco")
         implementation project(":glide")
+        implementation project(":pinch")
 
     } else {
         implementation "com.taoszu.imageloader:loaderframe:$loader_frame_version"
         implementation "com.taoszu.imageloader:glide:$loader_glide_version"
         implementation "com.taoszu.imageloader:fresco:$loader_fresco_version"
+        implementation "com.taoszu.imageloader:pinch:$loader_pinch_version"
     }
 
     implementation "com.facebook.fresco:fresco:1.9.0"
