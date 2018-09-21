@@ -5,6 +5,7 @@ import java.lang.IllegalArgumentException
 
 class LoadOptions private constructor(builder : Builder) {
 
+  var progressRes:Int = 0
   var placeHolderRes: Int = 0
   var failureRes: Int = 0
   var roundParams:RoundParams? = null
@@ -13,6 +14,7 @@ class LoadOptions private constructor(builder : Builder) {
   var asCircle = false
 
   init {
+    progressRes = builder.progressRes
     placeHolderRes = builder.placeHolderRes
     failureRes = builder.failureRes
     roundParams = builder.roundParams
@@ -21,11 +23,17 @@ class LoadOptions private constructor(builder : Builder) {
   }
 
   class Builder {
+    internal var progressRes: Int = 0
     internal var placeHolderRes: Int = 0
     internal var failureRes: Int = 0
     internal var roundParams:RoundParams? = null
     internal var asCircle = false
     internal var imageSize:ImageSize? = null
+
+    fun progress(progressRes: Int):Builder {
+      this.progressRes = progressRes
+      return this
+    }
 
     fun placeHolder(placeHolderRes: Int):Builder {
       this.placeHolderRes = placeHolderRes

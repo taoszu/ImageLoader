@@ -1,11 +1,15 @@
-package com.taoszu.imageloader.app
+package com.taoszu.imageloader
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
+import android.view.View
 
-class AutoRotateDrawable(drawable:Drawable) : Drawable(), Runnable {
+class AutoRotateDrawable(drawable:Drawable, rootView: View) : Drawable(), Runnable {
 
   val drawable = drawable as BitmapDrawable
 
@@ -17,30 +21,51 @@ class AutoRotateDrawable(drawable:Drawable) : Drawable(), Runnable {
   // Specified rotation direction
   private var mClockwise: Boolean = false
 
-  internal var mRotationAngle = 0f
+  private var mRotationAngle = 0f
 
   private var mIsScheduled = false
+
+  private val paint = Paint()
+
+  private var scaleBounds: Rect? = null
+
+  private val context = rootView.context.applicationContext
+
+  private val rootView = rootView
+
+  init {
+    paint.isAntiAlias = true
+  }
 
   override fun draw(canvas: Canvas?) {
     canvas?.let {
       val saveCount = it.save()
 
-      val bounds = bounds
-      val width = bounds.right - bounds.left
-      val height = bounds.bottom - bounds.top
+      if (scaleBounds == null) {
+        val left = bounds.left
+        val top  = bounds.top
+        val right = ImageTools.dp2px(context, drawable.bitmap.width.toFloat())
+        val bottom = ImageTools.dp2px(context, drawable.bitmap.height.toFloat())
+        scaleBounds = Rect(left, top, right.toInt(), bottom.toInt())
+      }
 
+      val bounds = scaleBounds!!
       var angle = mRotationAngle
       if (!mClockwise) {
         angle = DEGREES_IN_FULL_ROTATION - mRotationAngle
       }
 
-      it.rotate(angle, (bounds.left + width / 2).toFloat(), (bounds.top + height / 2).toFloat())
-      //canvas.drawColor(Color.RED)
+      val rotateX = (bounds.left + bounds.right) /2
+      val rotateY = (bounds.top + bounds.bottom) /2
+      val translateX = rootView.pivotX - bounds.width()/2
+      val translateY = rootView.pivotY - bounds.height()/2
 
-      canvas.drawBitmap(drawable.bitmap, bounds, bounds, Paint())
+      it.translate(translateX, translateY)
+      it.rotate(angle, rotateX.toFloat(), rotateY.toFloat())
+
+      it.drawBitmap(drawable.bitmap, bounds, bounds ,paint)
 
       it.restoreToCount(saveCount)
-
       scheduleNextFrame()
     }
 

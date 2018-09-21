@@ -52,7 +52,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'glide'
-    publishVersion = "1.0.8"
+    publishVersion = "1.0.9"
     desc = 'imageloader glide'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true
