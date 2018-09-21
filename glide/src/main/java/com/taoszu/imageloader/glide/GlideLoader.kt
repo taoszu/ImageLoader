@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.WorkerThread
+import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -55,13 +56,18 @@ class GlideLoader : ImageLoaderFrame() {
               override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                 super.onResourceReady(resource, transition)
 
-                val bitmap = (resource as BitmapDrawable).bitmap
-                imageInfoCallback?.onSuccess(ImageSize(bitmap.width, bitmap.height))
+                val width = resource.intrinsicWidth
+                val height = resource.intrinsicHeight
+                if (width > 0 && height > 0) {
+                  imageInfoCallback?.onSuccess(ImageSize(width, height))
+                } else {
+                  imageInfoCallback?.onFailed()
+                }
+
               }
 
               override fun onLoadFailed(errorDrawable: Drawable?) {
                 super.onLoadFailed(errorDrawable)
-
                 imageInfoCallback?.onFailed()
               }
             })

@@ -44,7 +44,6 @@ dependencies {
     } else {
         implementation "com.taoszu.imageloader:loaderframe:$loader_frame_version"
     }
-
     api('com.github.bumptech.glide:glide:4.8.0')
 }
 
@@ -53,7 +52,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'glide'
-    publishVersion = "1.0.7.1"
+    publishVersion = "1.0.8"
     desc = 'imageloader glide'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true
