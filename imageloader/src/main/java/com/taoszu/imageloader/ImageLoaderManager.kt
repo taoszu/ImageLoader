@@ -3,6 +3,7 @@ package com.taoszu.imageloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
+import java.io.File
 
 object ImageLoaderManager : ImageLoaderFrame() {
 
@@ -35,6 +36,10 @@ object ImageLoaderManager : ImageLoaderFrame() {
 
   override fun getBitmap(context: Context, uriString: String?): Bitmap? {
     return imageLoader?.getBitmap(context, uriString)
+  }
+
+  override fun requestFile(uriString: String?, fileCallback: FileCallback) {
+    imageLoader?.requestFile(uriString, fileCallback)
   }
 
   override fun clearDiskCache(context: Context) {

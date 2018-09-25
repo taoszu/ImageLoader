@@ -39,6 +39,7 @@ class AutoRotateDrawable(drawable:Drawable, rootView: View) : Drawable(), Runnab
 
   override fun draw(canvas: Canvas?) {
     canvas?.let {
+
       val saveCount = it.save()
 
       if (scaleBounds == null) {
