@@ -59,10 +59,15 @@ class FrescoLoader : ImageLoaderFrame() {
     val requestBuilder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(uriString))
     val imageRequest = requestBuilder.build()
     val dataSource = ImagePipelineFactory.getInstance().imagePipeline.fetchEncodedImage(imageRequest, null)
-    dataSource.subscribe(object: BaseDataSubscriber<CloseableReference<PooledByteBuffer>>(){
+    dataSource.subscribe(object : BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
       override fun onNewResultImpl(dataSource: DataSource<CloseableReference<PooledByteBuffer>>?) {
-        val resource = Fresco.getImagePipelineFactory().mainFileCache.getResource(SimpleCacheKey(uriString)) as FileBinaryResource
-        val file = resource.file
+        val resource = Fresco.getImagePipelineFactory().mainFileCache.getResource(SimpleCacheKey(uriString))
+        if (resource == null) {
+          requestFile(context, uriString, fileCallback)
+          return
+        }
+
+        val file = (resource as FileBinaryResource).file
         if (file != null) {
           fileCallback.onSuccess(file)
         } else {
@@ -115,7 +120,7 @@ class FrescoLoader : ImageLoaderFrame() {
 
   override fun loadUri(imageView: ImageView, uriString: String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?) {
     val controllerBuilder = Fresco.newDraweeControllerBuilder()
-    controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions,imageInfoCallback)
+    controllerBuilder.controllerListener = transformResizeListener(imageView, loaderOptions, imageInfoCallback)
 
     val draweeHolder = transformDraweeHolder(imageView, loaderOptions)
     draweeHolder.controller = controllerBuilder.setUri(uriString).build()
@@ -130,7 +135,7 @@ class FrescoLoader : ImageLoaderFrame() {
   }
 
 
-  private fun transformResizeListener(imageView: ImageView, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?):BaseControllerListener<ImageInfo> {
+  private fun transformResizeListener(imageView: ImageView, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?): BaseControllerListener<ImageInfo> {
     return object : BaseControllerListener<ImageInfo>() {
       override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
         super.onFinalImageSet(id, imageInfo, animatable)
@@ -152,7 +157,6 @@ class FrescoLoader : ImageLoaderFrame() {
       }
     }
   }
-
 
 
   private fun transformDraweeHolder(imageView: ImageView, loaderOptions: LoadOptions): DraweeHolder<GenericDraweeHierarchy> {

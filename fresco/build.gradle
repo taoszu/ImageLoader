@@ -56,7 +56,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'fresco'
-    publishVersion = "1.0.6"
+    publishVersion = "1.0.7"
     desc = 'imageloader fresco'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true
