@@ -38,8 +38,8 @@ object ImageLoaderManager : ImageLoaderFrame() {
     return imageLoader?.getBitmap(context, uriString)
   }
 
-  override fun requestFile(uriString: String?, fileCallback: FileCallback) {
-    imageLoader?.requestFile(uriString, fileCallback)
+  override fun requestFile(context: Context, uriString: String?, fileCallback: FileCallback) {
+    imageLoader?.requestFile(context, uriString, fileCallback)
   }
 
   override fun clearDiskCache(context: Context) {

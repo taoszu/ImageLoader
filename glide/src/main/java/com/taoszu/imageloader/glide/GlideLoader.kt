@@ -2,19 +2,17 @@ package com.taoszu.imageloader.glide
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.annotation.WorkerThread
-import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.taoszu.imageloader.*
+import java.io.File
 
 class GlideLoader : ImageLoaderFrame() {
 
@@ -26,6 +24,22 @@ class GlideLoader : ImageLoaderFrame() {
     // 需要自己定义GlideModule
   }
 
+  override fun requestFile(context: Context, uriString: String?, fileCallback: FileCallback) {
+    Glide.with(context)
+            .downloadOnly()
+            .load(uriString)
+            .into(object : SimpleTarget<File>() {
+              override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                fileCallback.onSuccess(resource)
+              }
+
+              override fun onLoadFailed(errorDrawable: Drawable?) {
+                super.onLoadFailed(errorDrawable)
+                fileCallback.onFailed()
+              }
+            })
+  }
+
   @WorkerThread
   override fun getBitmap(context: Context, uriString: String?): Bitmap? {
     return try {
@@ -34,7 +48,7 @@ class GlideLoader : ImageLoaderFrame() {
               .load(uriString)
               .submit()
               .get()
-    } catch (e:Exception) {
+    } catch (e: Exception) {
       null
     }
   }
@@ -66,7 +80,7 @@ class GlideLoader : ImageLoaderFrame() {
     Glide.with(glideView.context)
             .load(uriString)
             .apply(requestOptions)
-            .into(object: CustomViewTarget<ImageView, Drawable>(glideView) {
+            .into(object : CustomViewTarget<ImageView, Drawable>(glideView) {
               override fun onLoadFailed(errorDrawable: Drawable?) {
                 errorDrawable?.let {
                   view.setImageDrawable(errorDrawable)

@@ -3,7 +3,6 @@ package com.taoszu.imageloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
-import java.io.File
 
 abstract class ImageLoaderFrame {
 
@@ -39,7 +38,7 @@ abstract class ImageLoaderFrame {
 
   abstract fun getBitmap(context: Context, uriString: String?):Bitmap?
 
-  abstract fun requestFile(uriString: String?, fileCallback: FileCallback)
+  abstract fun requestFile(context: Context, uriString: String?, fileCallback: FileCallback)
 
   abstract fun clearMemoryCache(context: Context)
 

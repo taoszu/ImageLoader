@@ -2,13 +2,16 @@ package com.taoszu.imageloader.fresco
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.support.annotation.WorkerThread
 import android.widget.ImageView
+import com.facebook.binaryresource.FileBinaryResource
+import com.facebook.cache.common.SimpleCacheKey
 import com.facebook.common.executors.UiThreadImmediateExecutorService
+import com.facebook.common.memory.PooledByteBuffer
 import com.facebook.common.references.CloseableReference
+import com.facebook.datasource.BaseDataSubscriber
 import com.facebook.datasource.DataSource
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.controller.BaseControllerListener
@@ -50,6 +53,27 @@ class FrescoLoader : ImageLoaderFrame() {
 
   override fun init(context: Context) {
     Fresco.initialize(context.applicationContext)
+  }
+
+  override fun requestFile(context: Context, uriString: String?, fileCallback: FileCallback) {
+    val requestBuilder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(uriString))
+    val imageRequest = requestBuilder.build()
+    val dataSource = ImagePipelineFactory.getInstance().imagePipeline.fetchEncodedImage(imageRequest, null)
+    dataSource.subscribe(object: BaseDataSubscriber<CloseableReference<PooledByteBuffer>>(){
+      override fun onNewResultImpl(dataSource: DataSource<CloseableReference<PooledByteBuffer>>?) {
+        val resource = Fresco.getImagePipelineFactory().mainFileCache.getResource(SimpleCacheKey(uriString)) as FileBinaryResource
+        val file = resource.file
+        if (file != null) {
+          fileCallback.onSuccess(file)
+        } else {
+          fileCallback.onFailed()
+        }
+      }
+
+      override fun onFailureImpl(dataSource: DataSource<CloseableReference<PooledByteBuffer>>?) {
+        fileCallback.onFailed()
+      }
+    }, UiThreadImmediateExecutorService.getInstance())
   }
 
   @WorkerThread
