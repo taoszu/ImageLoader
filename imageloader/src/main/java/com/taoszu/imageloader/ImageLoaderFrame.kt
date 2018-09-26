@@ -9,7 +9,7 @@ abstract class ImageLoaderFrame {
 
   private val defaultOptions = LoadOptions.Builder().build()
 
-  fun clearTotalCache(context: Context) {
+  private fun clearTotalCache(context: Context) {
     clearDiskCache(context)
     clearMemoryCache(context)
   }
@@ -43,4 +43,6 @@ abstract class ImageLoaderFrame {
   abstract fun clearMemoryCache(context: Context)
 
   abstract fun clearDiskCache(context: Context)
+
+  abstract fun getDiskCache(context: Context):Long
 }

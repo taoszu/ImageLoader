@@ -128,10 +128,15 @@ class FrescoLoader : ImageLoaderFrame() {
   }
 
   override fun clearMemoryCache(context: Context) {
-
+    Fresco.getImagePipeline().clearMemoryCaches()
   }
 
   override fun clearDiskCache(context: Context) {
+    Fresco.getImagePipeline().clearDiskCaches()
+  }
+
+  override fun getDiskCache(context: Context): Long {
+    return Fresco.getImagePipelineFactory().mainFileCache.size
   }
 
 

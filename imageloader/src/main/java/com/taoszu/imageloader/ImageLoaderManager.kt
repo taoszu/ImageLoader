@@ -50,5 +50,8 @@ object ImageLoaderManager : ImageLoaderFrame() {
     imageLoader?.clearMemoryCache(context)
   }
 
+  override fun getDiskCache(context: Context): Long {
+    return imageLoader?.getDiskCache(context) ?: 0
+  }
 
 }

@@ -3,6 +3,7 @@ package com.taoszu.imageloader.glide
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -119,11 +120,28 @@ class GlideLoader : ImageLoaderFrame() {
   }
 
 
+  @MainThread
   override fun clearMemoryCache(context: Context) {
-
+    Glide.get(context).clearMemory()
   }
 
+  @WorkerThread
   override fun clearDiskCache(context: Context) {
+    Glide.get(context).clearDiskCache()
+  }
+
+  @WorkerThread
+  override fun getDiskCache(context: Context): Long {
+    val fileDir = Glide.getPhotoCacheDir(context)
+    fileDir?.let {
+      val fileList = it.listFiles()
+      var totalSize = 0L
+      for (i in 0 until fileList.size) {
+        totalSize += fileList[i].length()
+      }
+      return totalSize
+    }
+    return 0
   }
 
   private fun buildOptions(loadOptions: LoadOptions): RequestOptions {
