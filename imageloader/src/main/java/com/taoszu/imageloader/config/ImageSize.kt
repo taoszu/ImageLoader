@@ -1,4 +1,4 @@
-package com.taoszu.imageloader
+package com.taoszu.imageloader.config
 
 class ImageSize(width:Int, height:Int) {
 

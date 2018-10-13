@@ -1,4 +1,4 @@
-package com.taoszu.imageloader
+package com.taoszu.imageloader.tool
 
 import android.content.Context
 import android.view.View

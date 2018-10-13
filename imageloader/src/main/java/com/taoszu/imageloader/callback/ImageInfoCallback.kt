@@ -1,4 +1,6 @@
-package com.taoszu.imageloader
+package com.taoszu.imageloader.callback
+
+import com.taoszu.imageloader.config.ImageSize
 
 interface ImageInfoCallback {
 

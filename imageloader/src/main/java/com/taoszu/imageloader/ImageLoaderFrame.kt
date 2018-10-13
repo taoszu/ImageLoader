@@ -3,6 +3,10 @@ package com.taoszu.imageloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
+import com.taoszu.imageloader.callback.FileCallback
+import com.taoszu.imageloader.callback.ImageInfoCallback
+import com.taoszu.imageloader.config.FrameConfig
+import com.taoszu.imageloader.config.LoadOptions
 
 abstract class ImageLoaderFrame {
 

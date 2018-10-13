@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.view.View
+import com.taoszu.imageloader.tool.ImageTools
 
 class AutoRotateDrawable(drawable:Drawable, rootView: View) : Drawable(), Runnable {
 

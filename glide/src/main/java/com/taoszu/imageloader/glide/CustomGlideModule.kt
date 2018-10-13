@@ -5,7 +5,7 @@ import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.bumptech.glide.module.AppGlideModule
-import com.taoszu.imageloader.MemoryTools
+import com.taoszu.imageloader.tool.MemoryTools
 
 @GlideModule
 class CustomGlideModule : AppGlideModule() {

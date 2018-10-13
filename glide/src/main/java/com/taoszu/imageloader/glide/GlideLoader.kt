@@ -13,6 +13,12 @@ import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.taoszu.imageloader.*
+import com.taoszu.imageloader.callback.FileCallback
+import com.taoszu.imageloader.callback.ImageInfoCallback
+import com.taoszu.imageloader.config.FrameConfig
+import com.taoszu.imageloader.config.ImageSize
+import com.taoszu.imageloader.config.LoadOptions
+import com.taoszu.imageloader.tool.ImageTools
 import java.io.File
 
 class GlideLoader : ImageLoaderFrame() {

@@ -27,6 +27,12 @@ import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.ImageInfo
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.taoszu.imageloader.*
+import com.taoszu.imageloader.callback.FileCallback
+import com.taoszu.imageloader.callback.ImageInfoCallback
+import com.taoszu.imageloader.config.FrameConfig
+import com.taoszu.imageloader.config.ImageSize
+import com.taoszu.imageloader.config.LoadOptions
+import com.taoszu.imageloader.tool.ImageTools
 import java.util.concurrent.CountDownLatch
 
 

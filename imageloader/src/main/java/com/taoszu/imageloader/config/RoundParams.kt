@@ -1,6 +1,7 @@
-package com.taoszu.imageloader
+package com.taoszu.imageloader.config
 
 import android.content.Context
+import com.taoszu.imageloader.tool.ImageTools
 
 class RoundParams {
 
@@ -9,7 +10,7 @@ class RoundParams {
   /**
    * @param radius corner radius in pixels
    */
-  fun setRadius(radius:Float):RoundParams {
+  fun setRadius(radius:Float): RoundParams {
     this.radius = radius
     return this
   }
@@ -17,7 +18,7 @@ class RoundParams {
   /**
    * @param radius corner radius in dp
    */
-  fun setRadiusDp(context: Context, radius: Float):RoundParams {
+  fun setRadiusDp(context: Context, radius: Float): RoundParams {
     return setRadius(ImageTools.dp2px(context, radius))
   }
 
