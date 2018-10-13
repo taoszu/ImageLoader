@@ -8,6 +8,7 @@ import android.support.annotation.WorkerThread
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.target.SimpleTarget
@@ -74,6 +75,7 @@ class GlideLoader : ImageLoaderFrame() {
 
   override fun loadUri(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions, imageInfoCallback: ImageInfoCallback?) {
     val requestOptions = buildOptions(loaderOptions)
+    requestOptions.format(DecodeFormat.DEFAULT)
     loaderOptions.imageSize?.let {
       requestOptions.override(it.width, it.height)
     }
@@ -167,8 +169,20 @@ class GlideLoader : ImageLoaderFrame() {
     loadOptions.roundParams?.let {
       requestOptions.transform(RoundedCornersTransformation(it.radius, 0f))
     }
+
+    loadOptions.bitmapConfig?.let {
+      requestOptions.format(formatBitmapConfig(it))
+    }
+
     return requestOptions
   }
 
+  private fun formatBitmapConfig(bitmapConfig:Bitmap.Config):DecodeFormat {
+   return when(bitmapConfig) {
+      Bitmap.Config.RGB_565 -> DecodeFormat.PREFER_RGB_565
+      Bitmap.Config.ARGB_8888 -> DecodeFormat.PREFER_ARGB_8888
+      else -> DecodeFormat.DEFAULT
+    }
+  }
 
 }

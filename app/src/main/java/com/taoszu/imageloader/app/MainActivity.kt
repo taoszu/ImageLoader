@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.facebook.drawee.backends.pipeline.Fresco
-import com.taoszu.imageloader.FileCallback
 import com.taoszu.imageloader.ImageLoaderManager
 import com.taoszu.imageloader.fresco.FrescoLoader
 import com.taoszu.imageloader.glide.GlideLoader
@@ -42,17 +41,6 @@ class MainActivity : AppCompatActivity() {
     load_glide.setOnClickListener {
       ImageLoaderManager.injectLoader(GlideLoader()).init(this)
 
-
-      ImageLoaderManager.requestFile(this, frescoUriString, object:FileCallback {
-        override fun onFailed() {
-
-        }
-
-        override fun onSuccess(file: File) {
-
-        }
-
-      })
     }
 
 

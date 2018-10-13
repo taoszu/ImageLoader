@@ -61,6 +61,7 @@ class CircleTransformation : BitmapTransformation() {
 
     val stroke = 0f
     val circlePaint = Paint()
+    circlePaint.isAntiAlias = true
     val canvas = Canvas(result)
     canvas.drawCircle(radius, radius, radius - stroke, circlePaint)
 

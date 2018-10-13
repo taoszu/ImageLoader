@@ -3,14 +3,16 @@ package com.taoszu.imageloader.config
 import android.content.Context
 import com.taoszu.imageloader.tool.ImageTools
 import java.lang.IllegalArgumentException
+import android.graphics.Bitmap
 
 class LoadOptions private constructor(builder : Builder) {
 
   var progressRes:Int = 0
   var placeHolderRes: Int = 0
   var failureRes: Int = 0
-  var roundParams: RoundParams? = null
-  var imageSize: ImageSize? = null
+  var roundParams:RoundParams? = null
+  var imageSize:ImageSize? = null
+  var bitmapConfig:Bitmap.Config? = null
 
   var asCircle = false
 
@@ -21,6 +23,7 @@ class LoadOptions private constructor(builder : Builder) {
     roundParams = builder.roundParams
     asCircle = builder.asCircle
     imageSize = builder.imageSize
+    bitmapConfig = builder.bitmapConfig
   }
 
   class Builder {
@@ -29,7 +32,8 @@ class LoadOptions private constructor(builder : Builder) {
     internal var failureRes: Int = 0
     internal var roundParams: RoundParams? = null
     internal var asCircle = false
-    internal var imageSize: ImageSize? = null
+    internal var imageSize:ImageSize? = null
+    internal var bitmapConfig:Bitmap.Config? = null
 
     fun progress(progressRes: Int): Builder {
       this.progressRes = progressRes
@@ -51,7 +55,12 @@ class LoadOptions private constructor(builder : Builder) {
       return this
     }
 
-    fun asCircle(): Builder {
+    fun bitmapConfig(config:Bitmap.Config):Builder {
+      this.bitmapConfig = config
+      return this
+    }
+
+    fun asCircle():Builder {
       asCircle = true
       return this
     }
