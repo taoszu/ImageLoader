@@ -1,8 +1,10 @@
 package com.taoszu.imageloader.glide
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import android.view.ViewGroup
@@ -61,12 +63,29 @@ class GlideLoader : ImageLoaderFrame() {
     }
   }
 
+  /**
+   * 在活动销毁时 glide请求图片会奔溃
+   */
+  private fun isLive(context: Context): Boolean {
+    if (context is Activity) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && context.isDestroyed) {
+        return false
+      }
+    }
+    return true
+  }
+
   override fun loadRes(glideView: ImageView, resId: Int, loaderOptions: LoadOptions) {
     val requestOptions = buildOptions(loaderOptions)
-    Glide.with(glideView.context)
-            .load(resId)
-            .apply(requestOptions)
-            .into(glideView)
+
+    glideView.context?.takeIf {
+      isLive(it)
+    }?.let {
+      Glide.with(it)
+              .load(resId)
+              .apply(requestOptions)
+              .into(glideView)
+    }
   }
 
   override fun loadUri(glideView: ImageView, uriString: String?, loaderOptions: LoadOptions) {
@@ -86,45 +105,49 @@ class GlideLoader : ImageLoaderFrame() {
       }
     }
 
-    Glide.with(glideView.context)
-            .load(uriString)
-            .apply(requestOptions)
-            .into(object : CustomViewTarget<ImageView, Drawable>(glideView) {
-              override fun onLoadFailed(errorDrawable: Drawable?) {
-                errorDrawable?.let {
-                  view.setImageDrawable(errorDrawable)
-                }
-              }
 
-              override fun onResourceLoading(placeholder: Drawable?) {
-                super.onResourceLoading(placeholder)
-
-                if (loaderOptions.progressRes != 0) {
-                  glideView.setImageDrawable(AutoRotateDrawable(glideView.resources.getDrawable(loaderOptions.progressRes), glideView))
-                } else if (placeholder != null) {
-                  view.setImageDrawable(placeholder)
-                }
-              }
-
-              override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                view.setImageDrawable(resource)
-
-                val width = resource.intrinsicWidth
-                val height = resource.intrinsicHeight
-                if (width > 0 && height > 0) {
-                  imageInfoCallback?.onSuccess(ImageSize(width, height))
-                } else {
-                  imageInfoCallback?.onFailed()
+    glideView.context?.takeIf {
+      isLive(it)
+    }?.also {
+      Glide.with(it)
+              .load(uriString)
+              .apply(requestOptions)
+              .into(object : CustomViewTarget<ImageView, Drawable>(glideView) {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                  errorDrawable?.let {
+                    view.setImageDrawable(errorDrawable)
+                  }
                 }
 
-                if (loaderOptions.progressRes != 0) {
-                  ImageTools.resizeView(glideView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                override fun onResourceLoading(placeholder: Drawable?) {
+                  super.onResourceLoading(placeholder)
+
+                  if (loaderOptions.progressRes != 0) {
+                    glideView.setImageDrawable(AutoRotateDrawable(glideView.resources.getDrawable(loaderOptions.progressRes), glideView))
+                  } else if (placeholder != null) {
+                    view.setImageDrawable(placeholder)
+                  }
                 }
-              }
 
-              override fun onResourceCleared(placeholder: Drawable?) {}
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                  view.setImageDrawable(resource)
 
-            })
+                  val width = resource.intrinsicWidth
+                  val height = resource.intrinsicHeight
+                  if (width > 0 && height > 0) {
+                    imageInfoCallback?.onSuccess(ImageSize(width, height))
+                  } else {
+                    imageInfoCallback?.onFailed()
+                  }
+
+                  if (loaderOptions.progressRes != 0) {
+                    ImageTools.resizeView(glideView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                  }
+                }
+
+                override fun onResourceCleared(placeholder: Drawable?) {}
+              })
+    }
   }
 
 
@@ -177,8 +200,8 @@ class GlideLoader : ImageLoaderFrame() {
     return requestOptions
   }
 
-  private fun formatBitmapConfig(bitmapConfig:Bitmap.Config):DecodeFormat {
-   return when(bitmapConfig) {
+  private fun formatBitmapConfig(bitmapConfig: Bitmap.Config): DecodeFormat {
+    return when (bitmapConfig) {
       Bitmap.Config.RGB_565 -> DecodeFormat.PREFER_RGB_565
       Bitmap.Config.ARGB_8888 -> DecodeFormat.PREFER_ARGB_8888
       else -> DecodeFormat.DEFAULT

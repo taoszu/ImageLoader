@@ -7,9 +7,7 @@ import com.bumptech.glide.Glide
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.taoszu.imageloader.ImageLoaderManager
 import com.taoszu.imageloader.fresco.FrescoLoader
-import com.taoszu.imageloader.glide.GlideLoader
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,11 +33,12 @@ class MainActivity : AppCompatActivity() {
         Log.e("File", totalSize.toString())
       }
 
-
+      ImageLoaderManager.loadUri(fresco_view, uri)
     }
 
     load_glide.setOnClickListener {
-      ImageLoaderManager.injectLoader(GlideLoader()).init(this)
+      //ImageLoaderManager.injectLoader(GlideLoader()).init(this)
+      //ImageLoaderManager.loadUri(fresco_view, uri)
 
     }
 
