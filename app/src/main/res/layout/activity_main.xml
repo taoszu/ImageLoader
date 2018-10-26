@@ -21,9 +21,11 @@
 
     <ImageView
       android:id="@+id/fresco_view"
-      android:layout_width="100dp"
-      android:layout_height="300dp"
-      android:scaleType="centerInside"/>
+      android:layout_width="400dp"
+      android:layout_height="400dp"
+      android:scaleType="centerInside"
+      android:layout_marginLeft="20dp"
+      android:layout_marginRight="20dp"/>
 
 
   <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView

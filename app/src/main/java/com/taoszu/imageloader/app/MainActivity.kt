@@ -1,13 +1,21 @@
 package com.taoszu.imageloader.app
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.taoszu.imageloader.ImageLoaderManager
+import com.taoszu.imageloader.callback.FileCallback
+import com.taoszu.imageloader.config.LoadOptions
+import com.taoszu.imageloader.config.RoundParams
 import com.taoszu.imageloader.fresco.FrescoLoader
+import com.taoszu.imageloader.glide.GlideLoader
+import com.taoszu.imageloader.tool.ImageTools
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import java.nio.file.FileSystem
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,11 +45,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     load_glide.setOnClickListener {
-      //ImageLoaderManager.injectLoader(GlideLoader()).init(this)
-      //ImageLoaderManager.loadUri(fresco_view, uri)
+      ImageLoaderManager.injectLoader(GlideLoader()).init(this)
+
+      ImageLoaderManager.requestFile(it.context, "https://www.jiuwa.net/tuku/20171101/XicyZO1H.gif", object: FileCallback {
+        override fun onFailed() {
+          Log.e("File", "load failed")
+        }
+
+        override fun onSuccess(file: File) {
+          fresco_view.setImageURI(Uri.fromFile(file))
+          Log.e("File", file.length().toString())
+        }
+      })
 
     }
-
 
   }
 

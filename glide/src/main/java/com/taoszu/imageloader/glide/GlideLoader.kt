@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Handler
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import android.view.ViewGroup
@@ -13,16 +14,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.taoszu.imageloader.*
+import com.taoszu.imageloader.AutoRotateDrawable
+import com.taoszu.imageloader.ImageLoaderFrame
 import com.taoszu.imageloader.callback.FileCallback
 import com.taoszu.imageloader.callback.ImageInfoCallback
 import com.taoszu.imageloader.config.FrameConfig
 import com.taoszu.imageloader.config.ImageSize
 import com.taoszu.imageloader.config.LoadOptions
 import com.taoszu.imageloader.tool.ImageTools
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.io.File
+import kotlin.concurrent.thread
 
 class GlideLoader : ImageLoaderFrame() {
 
@@ -35,19 +38,27 @@ class GlideLoader : ImageLoaderFrame() {
   }
 
   override fun requestFile(context: Context, uriString: String?, fileCallback: FileCallback) {
-    Glide.with(context)
-            .downloadOnly()
-            .load(uriString)
-            .into(object : SimpleTarget<File>() {
-              override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                fileCallback.onSuccess(resource)
-              }
+    context.takeIf {
+      isLive(it)
+    }?.also {
 
-              override fun onLoadFailed(errorDrawable: Drawable?) {
-                super.onLoadFailed(errorDrawable)
-                fileCallback.onFailed()
-              }
-            })
+      var file:File?
+      thread {
+        file = try {
+          Glide.with(it).downloadOnly().load(uriString).submit().get()
+        } catch (e:Exception) {
+          null
+        }
+
+        Handler(it.mainLooper).post {
+          if (file != null) {
+            fileCallback.onSuccess(file!!)
+          } else {
+            fileCallback.onFailed()
+          }
+        }
+      }
+    }
   }
 
   @WorkerThread
@@ -186,11 +197,11 @@ class GlideLoader : ImageLoaderFrame() {
     }
 
     if (loadOptions.asCircle) {
-      requestOptions.transform(CircleTransformation())
+      requestOptions.circleCrop()
     }
 
     loadOptions.roundParams?.let {
-      requestOptions.transform(RoundedCornersTransformation(it.radius, 0f))
+      requestOptions.transform(RoundedCornersTransformation(it.radius.toInt(), 0))
     }
 
     loadOptions.bitmapConfig?.let {

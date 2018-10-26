@@ -3,4 +3,6 @@
   <color name="colorPrimary">#3F51B5</color>
   <color name="colorPrimaryDark">#303F9F</color>
   <color name="colorAccent">#FF4081</color>
+
+  <drawable name="fund_pie_chart1_color1">#1DB25B</drawable>
 </resources>
