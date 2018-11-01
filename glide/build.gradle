@@ -36,7 +36,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'jp.wasabeef:glide-transformations:3.3.0'
+    //implementation 'jp.wasabeef:glide-transformations:3.3.0'
 }
 
 dependencies {
@@ -53,7 +53,7 @@ publish {
     userOrg = 'taoszu'
     groupId = 'com.taoszu.imageloader'
     artifactId = 'glide'
-    publishVersion = "1.1.7"
+    publishVersion = "1.1.8"
     desc = 'imageloader glide'
     website = 'https://github.com/taoszu/ImageLoader'
     autoPublish = true

@@ -23,7 +23,6 @@ import com.taoszu.imageloader.config.FrameConfig
 import com.taoszu.imageloader.config.ImageSize
 import com.taoszu.imageloader.config.LoadOptions
 import com.taoszu.imageloader.tool.ImageTools
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -201,7 +200,7 @@ class GlideLoader : ImageLoaderFrame() {
     }
 
     loadOptions.roundParams?.let {
-      requestOptions.transform(RoundedCornersTransformation(it.radius.toInt(), 0))
+      //requestOptions.transform(RoundedCornersTransformation(it.radius.toInt(), 0))
     }
 
     loadOptions.bitmapConfig?.let {
